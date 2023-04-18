@@ -19,6 +19,9 @@ COPY . .
 # Install generator-tf-wdi
 RUN cd generator-tf-wdi && npm i && npm link
 
+# Install generator-tf-wdi
+RUN cd generator-jhipster && npm i && npm link
+
 
 # Install custom generator-jhipster
 # RUN cd generator-jhipster && npm ci && npm link
