@@ -4,7 +4,7 @@ FROM node:18.13.0
 WORKDIR /usr/src/app
 
 # Install Yeoman
-# RUN npm install -g yo
+RUN npm install -g yo
 
 # Copy package.json and package-lock.json
 COPY package*.json ./
@@ -17,7 +17,7 @@ COPY . .
 
 
 # Install generator-tf-wdi
-# RUN cd generator-tf-wdi && npm i && npm link
+RUN cd generator-tf-wdi && npm i && npm link
 
 
 # Install custom generator-jhipster

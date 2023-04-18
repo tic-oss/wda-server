@@ -26,53 +26,66 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Clone other repository
+        uses: actions/checkout@v2
         with:
-          aws-region:            ${{ env.AWS_REGION }}
-          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          repository: coMakeIT-TIC/generator-tf-wdi
+          ref: main
+          path: generator-tf-wdi
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+      - name : Check Contents
+        run  : |
+          ls
+          cd generator-tf-wdi
+          ls
 
-      - name: 'Build, tag, and push image to Amazon ECR'
-        id: build-image
-        env:
-          ECR_REGISTRY: '${{ steps.login-ecr.outputs.registry }}'
-          IMAGE_TAG: latest
-        run: >
-          # Build a docker container and
+      # - name: Configure AWS credentials
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-region:            ${{ env.AWS_REGION }}
+      #     aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-          # push it to ECR so that it can
+      # - name: Login to Amazon ECR
+      #   id: login-ecr
+      #   uses: aws-actions/amazon-ecr-login@v1
 
-          # be deployed to ECS.
+      # - name: 'Build, tag, and push image to Amazon ECR'
+      #   id: build-image
+      #   env:
+      #     ECR_REGISTRY: '${{ steps.login-ecr.outputs.registry }}'
+      #     IMAGE_TAG: latest
+      #   run: >
+      #     # Build a docker container and
 
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+      #     # push it to ECR so that it can
 
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      #     # be deployed to ECS.
 
-          echo "::set-output
-          name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+      #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
 
-      - name: Download task definition
-        run: |
-          aws ecs describe-task-definition --task-definition wda-server \
-          --query taskDefinition > wda-server.json
+      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      - name: Fill in the new image ID in the Amazon ECS task definition
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: '${{ env.ECS_TASK_DEFINITION }}'
-          container-name: '${{ env.CONTAINER_NAME }}'
-          image: '${{ steps.build-image.outputs.image }}'
+      #     echo "::set-output
+      #     name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
-      - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: '${{ steps.task-def.outputs.task-definition }}'
-          service: '${{ env.ECS_SERVICE }}'
-          cluster: '${{ env.ECS_CLUSTER }}'
-          wait-for-service-stability: true
+      # - name: Download task definition
+      #   run: |
+      #     aws ecs describe-task-definition --task-definition wda-server \
+      #     --query taskDefinition > wda-server.json
+
+      # - name: Fill in the new image ID in the Amazon ECS task definition
+      #   id: task-def
+      #   uses: aws-actions/amazon-ecs-render-task-definition@v1
+      #   with:
+      #     task-definition: '${{ env.ECS_TASK_DEFINITION }}'
+      #     container-name: '${{ env.CONTAINER_NAME }}'
+      #     image: '${{ steps.build-image.outputs.image }}'
+
+      # - name: Deploy Amazon ECS task definition
+      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      #   with:
+      #     task-definition: '${{ steps.task-def.outputs.task-definition }}'
+      #     service: '${{ env.ECS_SERVICE }}'
+      #     cluster: '${{ env.ECS_CLUSTER }}'
+      #     wait-for-service-stability: true
