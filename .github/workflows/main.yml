@@ -32,9 +32,10 @@ jobs:
           repository: coMakeIT-TIC/generator-tf-wdi
           ref: main
           path: generator-tf-wdi
+          # token: ${{ secrets.PAT }} # or ssh-key: ${{ secrets.SSH_KEY }}
 
       - name : Check Contents
-        run  : |
+        run  : >
           ls
           cd generator-tf-wdi
           ls
