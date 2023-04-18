@@ -44,6 +44,7 @@ jobs:
 
       - name: List directory contents
         run: |
+          cd generator-tf-wdi && \
           ls -la
 
       
