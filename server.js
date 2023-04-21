@@ -236,8 +236,6 @@ const generateZip = (folderPath, res) => {
   // Add the folder to the archive.
   archive.directory(folderPath, false);
 
-  // archive.finalize();
-
   // Finalize the archive and delete the dump folders/files.
   archive.finalize().then(() => {
     // Remove the folder once the archive is complete.
