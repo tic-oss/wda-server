@@ -73,6 +73,10 @@ const createJdlFromJson = (fileName, res) => {
                 applicationError[i] = ["Server Port cannot be empty"];
         }
 
+        var appFramework = false;
+        if (applications[i].applicationFramework == "go") {
+            appFramework = true;
+        }
         // Conversion of json to jdl (Application Options)
         const data = `
 application {
@@ -86,7 +90,8 @@ application {
         clientFramework ${applications[i].clientFramework.toLowerCase()},
         serviceDiscoveryType ${applications[i].serviceDiscoveryType.toLowerCase()},
         serverPort ${applications[i].serverPort},
-        logManagementType ${logManagementType.toLowerCase()}
+        logManagementType ${logManagementType.toLowerCase()},
+        ${appFramework ? 'blueprint [go]' : ''}
     }
 }
     
