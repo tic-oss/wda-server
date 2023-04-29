@@ -16,6 +16,8 @@ const createJdlFromJson = (fileName, res) => {
         logManagementType ="eck";
     }
 
+    var blueprints = [ "go"];
+
     for (let i = 0; i < applicationCount; i++) {
         // Error handling
         if (applications[i].applicationName === "") {
@@ -74,8 +76,8 @@ const createJdlFromJson = (fileName, res) => {
         }
 
         var appFramework = false;
-        if (applications[i].applicationFramework == "go") {
-            appFramework = true;
+        if (applications[i].applicationFramework !== undefined && blueprints.includes(applications[i].applicationFramework)) {
+            appFramework = true ;
         }
         // Conversion of json to jdl (Application Options)
         const data = `
@@ -91,7 +93,7 @@ application {
         serviceDiscoveryType ${applications[i].serviceDiscoveryType.toLowerCase()},
         serverPort ${applications[i].serverPort},
         logManagementType ${logManagementType.toLowerCase()},
-        ${appFramework ? 'blueprint [go]' : ''}
+        ${appFramework ? `blueprint [${applications[i].applicationFramework.toLowerCase()}]` : ''}
     }
 }
     
