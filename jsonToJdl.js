@@ -103,7 +103,7 @@ application {
 }
     
 `;
-        data.replace(/^\s*[\r\n]/gm,'');
+        // data.replace(/^\s*[\r\n]/gm,'');
         appData.push(data);
     }
 
