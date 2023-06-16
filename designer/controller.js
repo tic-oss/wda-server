@@ -38,7 +38,7 @@ exports.getBlueprints = function (req, res) {
     blueprintDao.getByUserId({user_id: userId})
     .then(results => {
       console.log("Retrieved blueprints of user:", userId);
-      return res.status(200).send(results);
+      return res.status(200).json({data:results});
     })
     .catch(error => {
       console.error("Error retrieving blueprints:", error);
