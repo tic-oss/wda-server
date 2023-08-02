@@ -46,6 +46,10 @@ exports.getBlueprints = function (req, res) {
     });
   };
 
+  exports.sayHello = function (req, res) {
+    return res.status(200).json({ message: "Hellooooooooo from api👋 " });
+  }
+
 /**
  * Save delete the blueprint with given project Id
  * @param {*} req 

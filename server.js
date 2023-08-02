@@ -53,7 +53,7 @@ app.use(keycloak.middleware({
 var router = express.Router();
 
 // use express router
-app.use('/api',keycloak.protect(), router);
+app.use('/api',router);
 
 
 
