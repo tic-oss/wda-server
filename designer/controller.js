@@ -4,21 +4,106 @@ const jdlConverter = require('../utility/jsonToJdl');
 const exec = require("child_process").exec;
 const blueprintDao = require('../dao/blueprintDao');
 
+
+
+/**
+ * Update specific blueprint with given project Id
+ * @param {*} req 
+ * @param {*} res 
+ */
+exports.updateBlueprint = function (req, res) {
+  const userId = req.kauth.grant.access_token.content.sub;
+  const updatedData = {request_json:req.body.request_json,metadata:req.body.metadata}; 
+
+  blueprintDao.update({ project_id: req.params.project_id }, updatedData)
+  .then(result => {
+    if(result == null)
+    {
+      console.log("No Data present with the given Id:"+req.params.project_id)
+      return res.status(500).send({ message:"No Data present with the given Id:"+req.params.project_id})
+    }
+    else if (Array.isArray(result) && result.length === 1) {
+      var uniqueResult = result[0];
+      console.log("Updated blueprint with project Id: " + uniqueResult.project_id + ", for the user: " + userId);
+      return res.status(200).send(uniqueResult);
+    } else {
+      console.log("Updated blueprint with project Id: " + result.project_id + ", for the user: " + userId);
+      return res.status(200).send({ result });
+    }
+  })
+  .catch(error => {
+    console.error("Error updating blueprint:", error);
+    return res.status(500).send({ message: "Error updating blueprint" });
+  });
+};
+
+/**
+ * Create or Save blueprint in the Database
+ * @param {*} req 
+ * @param {*} res 
+ */
+exports.createBlueprint = function (req,res) {
+  const userId = req.kauth.grant.access_token.content.sub;
+  const blueprint = req.body;
+  blueprintDao.create(blueprint)
+  .then(savedBlueprint => {
+      console.log("Blueprint was added successfully!");
+  })
+  .catch(error => {
+      console.error(error);
+      return res.status(500).send({ message: "Error saving blueprint" });
+  });
+}
+
+/**
+ * Verify whether specific blueprint with given project Id belongs to the current user
+ * @param {*} req 
+ * @param {*} res 
+ */
+exports.verifyproject = function(req,res) {
+  const userId = req.kauth.grant.access_token.content.sub;
+  blueprintDao.getByProjectId({project_id: req.params.project_id})
+  .then(result => {
+    if (Array.isArray(result) && result.length === 1) {
+        var uniqueResult = result[0];
+        if(userId == uniqueResult.user_id){
+          return res.status(200).send("Yes");
+        }
+        else{
+          return res.status(204).send("No");
+        }
+      } 
+      else {
+        console.log("Retrieved blueprint with project Id: "+ result.project_id); 
+        if(userId = result.user_id){
+          return res.status(200).send("Yes");
+        }
+        else{
+          return res.status(204).send("No");
+        }
+      }
+  })
+  .catch(error => {
+    console.error("Error retrieving blueprint:", error);
+    return res.status(500).send({ message: "Error retrieving blueprint" });
+  });
+  // return res.status(204).send("No");
+}
+
 /**
  * Get specific blueprint with given project Id
  * @param {*} req 
  * @param {*} res 
  */
 exports.getBlueprint = function (req, res) {
-  const userId = req.kauth.grant.access_token.content.sub;
   blueprintDao.getByProjectId({project_id: req.params.project_id})
   .then(result => {
     if (Array.isArray(result) && result.length === 1) {
         var uniqueResult = result[0];
-        console.log("Retrieved blueprint with project Id: "+ uniqueResult.project_id + ", for the user: " + userId); 
+        console.log("Retrieved blueprint with project Id: "+ uniqueResult.project_id ); 
         return res.status(200).send(uniqueResult);
       } else {
-        console.log("Retrieved blueprint with project Id: "+ result.project_id + ", for the user: " + userId); 
+        console.log("Retrieved blueprint with project Id: "+ result.project_id); 
         return res.status(200).send({result});
       }
   })
@@ -45,6 +130,8 @@ exports.getBlueprints = function (req, res) {
       return res.status(500).send({ message: "Error retrieving blueprints" });
     });
   };
+
+
 
 /**
  * Save delete the blueprint with given project Id
@@ -106,6 +193,7 @@ exports.generate = function (req, res) {
     );
 
     const fileName = nanoid(9);
+    if(!body.projectId)
     body.projectId = body.projectName + "-" + fileName; // To over ride the frontend value (and to maintain unique folder name)
     const metadata = body.metadata;
     // preprocessing the request json 
