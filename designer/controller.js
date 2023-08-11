@@ -42,12 +42,13 @@ exports.updateBlueprint = function (req, res) {
  * @param {*} req 
  * @param {*} res 
  */
-exports.createBlueprint = function (req,res) {
+exports.saveAsDraft = function (req,res) {
   const userId = req.kauth.grant.access_token.content.sub;
   const blueprint = req.body;
   blueprintDao.create(blueprint)
   .then(savedBlueprint => {
       console.log("Blueprint was added successfully!");
+      return res.sendStatus(200);
   })
   .catch(error => {
       console.error(error);
@@ -60,26 +61,26 @@ exports.createBlueprint = function (req,res) {
  * @param {*} req 
  * @param {*} res 
  */
-exports.verifyproject = function(req,res) {
+exports.verifyProject = function(req,res) {
   const userId = req.kauth.grant.access_token.content.sub;
   blueprintDao.getByProjectId({project_id: req.params.project_id})
   .then(result => {
     if (Array.isArray(result) && result.length === 1) {
         var uniqueResult = result[0];
         if(userId == uniqueResult.user_id){
-          return res.status(200).send("Yes");
+          return res.sendStatus(200);
         }
         else{
-          return res.status(204).send("No");
+          return res.sendStatus(204);
         }
       } 
       else {
         console.log("Retrieved blueprint with project Id: "+ result.project_id); 
         if(userId = result.user_id){
-          return res.status(200).send("Yes");
+          return res.status(200).send();
         }
         else{
-          return res.status(204).send("No");
+          return res.status(204).send();
         }
       }
   })
@@ -87,7 +88,6 @@ exports.verifyproject = function(req,res) {
     console.error("Error retrieving blueprint:", error);
     return res.status(500).send({ message: "Error retrieving blueprint" });
   });
-  // return res.status(204).send("No");
 }
 
 /**

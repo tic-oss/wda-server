@@ -5,6 +5,6 @@ module.exports = function(router) {
     router.delete('/delete/:project_id', wda.deleteBlueprint);
     router.get('/projects', wda.getProjectNames);
     router.post('/update/:project_id',wda.updateBlueprint);
-    router.get('/user/:project_id',wda.verifyproject);
-    router.post('/create',wda.createBlueprint);
+    router.get('/user/:project_id',wda.verifyProject);
+    router.post('/drafts/create',wda.saveAsDraft);
 }
