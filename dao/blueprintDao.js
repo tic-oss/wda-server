@@ -43,11 +43,19 @@ blueprintSchema.statics = {
     },
 
     update: function(query, updateData) {
-        return this.findOneAndUpdate(query, {$set: updateData},{new: true});
+        return this.findOneAndUpdate(
+            query, 
+            {$set: updateData},
+            {new: true}
+        );
     },
 
     deleteByProjectId: function (query) {
-        return this.findOneAndUpdate(query, { $set: { deleted: true } }, { new: true });
+        return this.findOneAndUpdate(
+            query, 
+            { $set: { deleted: true } }, 
+            { new: true }
+        );
     },
 
     getByProjectNamesAndUserId: function (query) {
