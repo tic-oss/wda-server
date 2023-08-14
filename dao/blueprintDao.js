@@ -50,7 +50,7 @@ blueprintSchema.statics = {
         return this.findOneAndUpdate(query, { $set: { deleted: true } }, { new: true });
     },
 
-    getByProjectNamesAndUserId: function (quey) {
+    getByProjectNamesAndUserId: function (query) {
         const projection = {
           _id: 0,
           "request_json.projectName": 1
