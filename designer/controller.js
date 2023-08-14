@@ -134,7 +134,7 @@ exports.getBlueprints = function (req, res) {
 
 
 /**
- * Save delete the blueprint with given project Id
+ * Soft delete the blueprint with given project Id
  * @param {*} req 
  * @param {*} res 
  */
