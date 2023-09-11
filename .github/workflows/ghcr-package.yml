@@ -79,5 +79,5 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token ${{ secrets.ACCESS_TOKEN }}" \
             https://api.github.com/repos/tic-oss/hetzner/actions/workflows/server-deploy.yml/dispatches \
-            -d '{"ref": "ui-workflow"}'
+            -d '{"ref": "main"}'
       
